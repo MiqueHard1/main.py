@@ -1,0 +1,14 @@
+def criar_empresa(aaa):
+    empresa = {
+        "nome_institucional": "CyberSec Solutions Ltda",
+        "cnpj": "12.345.678/0001-99",
+        "setor": "Segurança da Informação",
+        "recursos_em_operacao": ["Servidor Principal", "Banco de Dados Produção", "Painel Administrativo"]
+    }
+    return empresa
+
+def exibir_empresa(empresa):
+    print(f"Nome Institucional: {empresa['nome_institucional']}")
+    print(f"CNPJ: {empresa['cnpj']}")
+    print(f"Setor: {empresa['setor']}")
+    print(f"Recursos em Operação: {', '.join(empresa['recursos_em_operacao'])}")
