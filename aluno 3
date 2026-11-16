@@ -1,0 +1,66 @@
+# ==========================================
+# ALUNO 3 - Menu Interativo com Validacao
+# ==========================================
+
+
+def ler_posicao(texto):
+    while True:
+        valor = input(texto).strip()
+
+        if valor == "":
+            print("Entrada vazia")
+        elif not valor.isdigit():
+            print("Digite apenas numeros")
+        elif int(valor) < 1 or int(valor) > 3:
+            print("Posicao invalida")
+        else:
+            return int(valor) - 1  # converte para indice (0 a 2)
+
+
+def mostrar_menu():
+    print("\n1 - Mostrar portas")
+    print("2 - Liberar porta")
+    print("3 - Fechar porta")
+    print("4 - Mostrar dados da empresa")
+    print("0 - Sair")
+
+
+def alterar_porta(opcao):
+    # opcao "2" libera (1) e opcao "3" fecha (0), igual ao Aluno 2
+    mostrar()
+    setor = ler_posicao("Setor (1 a 3): ")
+    porta = ler_posicao("Porta (1 a 3): ")
+
+    if opcao == "2":
+        matriz[setor][porta] = 1
+        print("Porta liberada")
+    else:
+        matriz[setor][porta] = 0
+        print("Porta fechada")
+
+
+# ---------- Programa principal ----------
+empresa = criar_empresa(None)
+
+while True:
+    mostrar_menu()
+    opcao = input("Escolha: ").strip()
+
+    if opcao == "":
+        print("Entrada vazia")
+
+    elif opcao == "1":
+        mostrar()
+
+    elif opcao == "2" or opcao == "3":
+        alterar_porta(opcao)
+
+    elif opcao == "4":
+        exibir_empresa(empresa)
+
+    elif opcao == "0":
+        print("Saindo...")
+        break
+
+    else:
+        print("Opcao invalida")
