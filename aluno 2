@@ -1,0 +1,45 @@
+setores = ["Recepcao", "TI", "Financeiro"]
+
+matriz = [
+    [0, 0, 0],
+    [0, 0, 0],
+    [0, 0, 0],
+]
+
+
+def mostrar():
+    print()
+    for i in range(3):
+        print(setores[i], matriz[i])
+
+
+opcao = ""
+while opcao != "0":
+    print("\n1 - Mostrar portas")
+    print("2 - Liberar porta")
+    print("3 - Fechar porta")
+    print("0 - Sair")
+    opcao = input("Escolha: ")
+
+    if opcao == "1":
+        mostrar()
+
+    elif opcao == "2" or opcao == "3":
+        mostrar()
+        setor = int(input("Setor (1 a 3): ")) - 1
+        porta = int(input("Porta (1 a 3): ")) - 1
+
+        if setor < 0 or setor > 2 or porta < 0 or porta > 2:
+            print("Posicao invalida")
+        elif opcao == "2":
+            matriz[setor][porta] = 1
+            print("Porta liberada")
+        else:
+            matriz[setor][porta] = 0
+            print("Porta fechada")
+
+    elif opcao == "0":
+        print("Saindo...")
+
+    else:
+        print("Opcao invalida")
