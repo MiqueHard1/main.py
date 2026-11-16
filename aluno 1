@@ -1,14 +1,36 @@
-def criar_empresa(aaa):
-    empresa = {
-        "nome_institucional": "CyberSec Solutions Ltda",
-        "cnpj": "12.345.678/0001-99",
-        "setor": "Segurança da Informação",
-        "recursos_em_operacao": ["Servidor Principal", "Banco de Dados Produção", "Painel Administrativo"]
-    }
-    return empresa
+def criar_empresa():
+    return {
+         "nome_institucional": "CyberSec Solutions Ltda",
+         "cnpj": "12.345.678/0001-99",
+         "setor": "Segurança da Informação",
+         "recursos_em_operacao": [
+              "Servidor Principal",
+              "Banco de Dados Produção",
+              "Painel Administrativo",
+              "Sistema de Controle de Acesso",
+              "Estação de Trabalho"
+              ]
+            }
+
 
 def exibir_empresa(empresa):
-    print(f"Nome Institucional: {empresa['nome_institucional']}")
+    print("\n===== DADOS DA EMPRESA =====")
+    print(f"Nome: {empresa['nome_institucional']}")
     print(f"CNPJ: {empresa['cnpj']}")
     print(f"Setor: {empresa['setor']}")
-    print(f"Recursos em Operação: {', '.join(empresa['recursos_em_operacao'])}")
+    
+    print("\nRecursos em Operação:")
+    for recurso in empresa["recursos_em_operacao"]:
+        print(f"- {recurso}")
+
+
+def adicionar_recurso(empresa, recurso):
+    recurso = recurso.strip()
+    
+    if recurso and recurso not in empresa["recursos_em_operacao"]:
+        empresa["recursos_em_operacao"].append(recurso)
+        return True
+    
+    return False
+
+empresa = criar_empresa()
