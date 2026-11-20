@@ -157,3 +157,5 @@ def main():
             break
         else:
             print("Opcao invalida")
+
+main()
