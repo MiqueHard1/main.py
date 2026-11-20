@@ -1,15 +1,110 @@
-# ==========================================
-# ALUNO 3 - Menu Interativo com Validacao
-# ==========================================
+# ---------- ALUNO 3 - Painel Consolidado e Regras de Negocio ----------
+def converter_para_float(texto):
+    # Converte texto em float. Aceita "1250.50", "1250,50",
+    # "1.250,50" e "R$ 1.250,50". Retorna None se for invalido.
+    texto = texto.replace("R$", "").strip()
+
+    if texto == "":
+        return None
+
+    if "," in texto:
+        # padrao brasileiro: ponto separa milhar, virgula separa decimal
+        texto = texto.replace(".", "").replace(",", ".")
+    elif texto.count(".") > 1 or (texto.count(".") == 1 and len(texto.split(".")[1]) == 3):
+        # sem virgula, mas com pontos de milhar (ex.: "3.200" ou "1.250.000")
+        texto = texto.replace(".", "")
+
+    try:
+        return float(texto)
+    except ValueError:
+        return None
 
 
+def formatar_reais(valor):
+    # 12500.5 -> "R$ 12.500,50"
+    texto = f"{valor:,.2f}"  # 12,500.50
+    texto = texto.replace(",", "X").replace(".", ",").replace("X", ".")
+    return "R$ " + texto
+
+
+def ler_custos(caminho="dados.csv"):
+    # Le o CSV linha a linha com readline().
+    # Retorna um dicionario {setor: custo_total}.
+    custos = {}
+    for nome in setores:
+        custos[nome] = 0.0
+
+    try:
+        arquivo = open(caminho, "r", encoding="utf-8")
+    except FileNotFoundError:
+        print("Arquivo " + caminho + " nao encontrado")
+        return custos
+
+    arquivo.readline()  # pula o cabecalho
+    numero_linha = 1
+
+    linha = arquivo.readline()
+    while linha != "":
+        numero_linha += 1
+        linha = linha.strip()
+
+        if linha != "":
+            # o custo pode ter virgula (ex.: "1.250,50"), entao
+            # separamos so as 2 primeiras virgulas: setor, descricao, custo
+            partes = linha.split(",", 2)
+
+            if len(partes) < 3:
+                print("Linha " + str(numero_linha) + " ignorada: formato invalido")
+            else:
+                setor = partes[0].strip()
+                valor = converter_para_float(partes[2].strip().strip('"'))
+
+                if setor not in custos:
+                    print("Linha " + str(numero_linha) + " ignorada: setor desconhecido (" + setor + ")")
+                elif valor is None:
+                    print("Linha " + str(numero_linha) + " ignorada: custo invalido")
+                else:
+                    custos[setor] += valor
+
+        linha = arquivo.readline()
+
+    arquivo.close()
+    return custos
+
+
+def exibir_painel(empresa):
+    custos = ler_custos()
+    total_geral = 0.0
+
+    print("\n" + "=" * 66)
+    print("PAINEL CONSOLIDADO")
+    print("Empresa: " + empresa["nome_institucional"])
+    print("CNPJ:    " + empresa["cnpj"])
+    print("=" * 66)
+    print(f"{'Setor':<12}{'Portas':<12}{'Liberadas':<11}{'Custo total':>20}")
+    print("-" * 66)
+
+    for i in range(3):
+        nome = setores[i]
+        liberadas = sum(matriz[i])
+        cobrado = custos[nome] * liberadas / 3
+        total_geral += cobrado
+        print(f"{nome:<12}{str(matriz[i]):<12}{str(liberadas) + '/3':<11}{formatar_reais(cobrado):>20}")
+
+    print("-" * 66)
+    print(f"{'TOTAL GERAL':<35}{formatar_reais(total_geral):>31}")
+    print("=" * 66)
+
+
+# ---------- ALUNO 3 - Menu Interativo com Validacao ----------
 def ler_posicao(texto):
+    # Repete a pergunta ate o usuario digitar um numero de 1 a 3.
     while True:
         valor = input(texto).strip()
 
         if valor == "":
             print("Entrada vazia")
-        elif not valor.isdigit():
+        elif not valor.isdecimal():  # isdecimal evita erro com caracteres como "²"
             print("Digite apenas numeros")
         elif int(valor) < 1 or int(valor) > 3:
             print("Posicao invalida")
@@ -22,11 +117,12 @@ def mostrar_menu():
     print("2 - Liberar porta")
     print("3 - Fechar porta")
     print("4 - Mostrar dados da empresa")
+    print("5 - Painel consolidado")
     print("0 - Sair")
 
 
 def alterar_porta(opcao):
-    # opcao "2" libera (1) e opcao "3" fecha (0), igual ao Aluno 2
+    # opcao "2" libera (1) e opcao "3" fecha (0)
     mostrar()
     setor = ler_posicao("Setor (1 a 3): ")
     porta = ler_posicao("Porta (1 a 3): ")
@@ -39,28 +135,25 @@ def alterar_porta(opcao):
         print("Porta fechada")
 
 
-# ---------- Programa principal ----------
-empresa = criar_empresa(None)
+def main():
+    empresa = criar_empresa(None)
 
-while True:
-    mostrar_menu()
-    opcao = input("Escolha: ").strip()
+    while True:
+        mostrar_menu()
+        opcao = input("Escolha: ").strip()
 
-    if opcao == "":
-        print("Entrada vazia")
-
-    elif opcao == "1":
-        mostrar()
-
-    elif opcao == "2" or opcao == "3":
-        alterar_porta(opcao)
-
-    elif opcao == "4":
-        exibir_empresa(empresa)
-
-    elif opcao == "0":
-        print("Saindo...")
-        break
-
-    else:
-        print("Opcao invalida")
+        if opcao == "":
+            print("Entrada vazia")
+        elif opcao == "1":
+            mostrar()
+        elif opcao == "2" or opcao == "3":
+            alterar_porta(opcao)
+        elif opcao == "4":
+            exibir_empresa(empresa)
+        elif opcao == "5":
+            exibir_painel(empresa)
+        elif opcao == "0":
+            print("Saindo...")
+            break
+        else:
+            print("Opcao invalida")
